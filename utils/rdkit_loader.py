@@ -1,63 +1,53 @@
 import csv
-from rdkit import Chem
-from rdkit.Chem import Draw
+import os
+
 import torch
 import torchvision.transforms as transforms
+from rdkit import Chem
+from rdkit.Chem import Draw
 
 
 def smiles_to_tensor(smiles_string, image_size=(128, 128)):
-  """Converts a chemical SMILES string into a PyTorch image tensor
-
-  representing its 2D molecular structure.
-  """
+  """Converts a SMILES string into a normalized 2D image tensor using RDKit."""
   mol = Chem.MolFromSmiles(smiles_string)
   if mol is None:
-    return None  # Skip invalid SMILES gracefully
+    # Fallback blank image if SMILES parsing fails
+    img = Image.new("RGB", image_size, (255, 255, 255))
+  else:
+    img = Draw.MolToImage(mol, size=image_size)
 
-  img = Draw.MolToImage(mol, size=image_size)
-  transform = transforms.Compose([transforms.ToTensor()])
+  transform = transforms.Compose([
+      transforms.Grayscale(num_output_channels=1),
+      transforms.ToTensor(),
+      transforms.Normalize(mean=[0.5], std=[0.5]),
+  ])
   return transform(img)
 
 
-def load_real_biochem_data(csv_filepath="data/molecules.csv"):
-  """Loads real molecular data from the BBBP CSV file
+def load_bbbp_dataset(csv_path):
+  """Loads the BBBP dataset CSV containing schema: num, name, p_np, smiles
 
-  using columns: num, name, p_np, smiles
+  and generates RDKit structural image tensors for each molecule.
   """
-  molecule_tensors = []
-  labels = []
-
-  print(f"Loading molecular data from {csv_filepath}...")
-
-  with open(csv_filepath, mode="r", encoding="utf-8") as f:
+  data = []
+  with open(csv_path, mode="r", encoding="utf-8") as f:
     reader = csv.DictReader(f)
     for row in reader:
-      smiles = row.get("smiles")
-      p_np_val = row.get("p_np")
-
-      if not smiles or p_np_val == "" or p_np_val is None:
-        continue
-
+      num = row.get("num", "")
+      name = row.get("name", "")
       try:
-        # Convert label to integer (handles potential float formats like '1.0')
-        label = int(float(p_np_val))
+        p_np = int(float(row.get("p_np", 0)))
       except ValueError:
-        continue
+        p_np = 0
+      smiles = row.get("smiles", "")
 
-      # Convert SMILES to image tensor via RDKit
-      tensor = smiles_to_tensor(smiles)
-      if tensor is not None:
-        molecule_tensors.append(tensor)
-        labels.append(label)
-
-  if not molecule_tensors:
-    raise ValueError("No valid molecules were loaded from the CSV file!")
-
-  molecule_tensors = torch.stack(molecule_tensors)
-  label_tensors = torch.tensor(labels, dtype=torch.long)
-
-  print(
-      f"Successfully loaded {len(molecule_tensors)} valid molecules across"
-      f" {len(set(labels))} classes from BBBP dataset."
-  )
-  return molecule_tensors, label_tensors
+      if smiles:
+        tensor = smiles_to_tensor(smiles)
+        data.append({
+            "num": num,
+            "name": name,
+            "p_np": p_np,
+            "smiles": smiles,
+            "tensor": tensor,
+        })
+  return data
