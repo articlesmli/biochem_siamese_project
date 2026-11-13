@@ -1,7 +1,6 @@
 import csv
-import os
 
-import torch
+from PIL import Image
 import torchvision.transforms as transforms
 from rdkit import Chem
 from rdkit.Chem import Draw

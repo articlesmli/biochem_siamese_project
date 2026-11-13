@@ -1,6 +1,6 @@
-import torch
-import torch.optim as optim
 from torch.utils.data import DataLoader
+import torch
+
 from models.siamese_net import SiameseNetwork
 from utils.dataset import SiameseBiochemDataset
 from utils.metrics import ContrastiveLoss

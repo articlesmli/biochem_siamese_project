@@ -1,5 +1,5 @@
 import argparse
-csv_module = __import__("csv")
+import csv
 from datetime import datetime
 import torch
 import torch.nn.functional as F
@@ -46,7 +46,7 @@ def load_candidates_synchronized(csv_filepath="data/molecules.csv"):
   print(f"Loading and aligning candidate library from '{csv_filepath}'...")
 
   with open(csv_filepath, mode="r", encoding="utf-8") as f:
-    reader = csv_module.DictReader(f)
+    reader = csv.DictReader(f)
     for row in reader:
       smiles = row.get("smiles")
       name = row.get("name", "Unknown")
@@ -168,7 +168,7 @@ def perform_one_shot_screening():
       "Embedding_Distance",
   ]
   with open(report_filename, mode="w", newline="", encoding="utf-8") as csv_file:
-    writer = csv_module.DictWriter(csv_file, fieldnames=csv_columns)
+    writer = csv.DictWriter(csv_file, fieldnames=csv_columns)
     writer.writeheader()
     for row in report_rows:
       writer.writerow(row)
