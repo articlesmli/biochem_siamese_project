@@ -1,11 +1,11 @@
-import torch.nn as nn
 import torch.nn.functional as F
+from torch import nn
 
 
 class SiameseNetwork(nn.Module):
 
   def __init__(self):
-    super(SiameseNetwork, self).__init__()
+    super().__init__()
 
     # Convolutional Feature Extraction Subnetwork
     self.cnn = nn.Sequential(

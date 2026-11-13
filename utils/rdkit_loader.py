@@ -1,9 +1,9 @@
 import csv
 
 from PIL import Image
-import torchvision.transforms as transforms
 from rdkit import Chem
 from rdkit.Chem import Draw
+from torchvision import transforms
 
 
 def smiles_to_tensor(smiles_string, image_size=(128, 128)):

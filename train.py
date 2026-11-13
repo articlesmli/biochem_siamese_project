@@ -1,5 +1,5 @@
-from torch.utils.data import DataLoader
 import torch
+from torch.utils.data import DataLoader
 
 from models.siamese_net import SiameseNetwork
 from utils.dataset import SiameseBiochemDataset

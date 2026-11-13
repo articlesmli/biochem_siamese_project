@@ -1,8 +1,10 @@
 import argparse
 import csv
 from datetime import datetime
+
 import torch
 import torch.nn.functional as F
+
 from models.siamese_net import SiameseNetwork
 from utils.rdkit_loader import smiles_to_tensor
 
@@ -108,7 +110,7 @@ def perform_one_shot_screening():
         "data/molecules.csv"
     )
     candidate_tensors = candidate_tensors.to(device)
-  except Exception as e:
+  except (FileNotFoundError, ValueError, RuntimeError) as e:
     print(f"Error loading candidate library: {e}")
     return
 
