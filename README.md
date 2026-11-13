@@ -9,7 +9,7 @@ An end-to-end deep learning pipeline that uses a **Siamese Convolutional Neural 
 The pipeline relies on a **Siamese Neural Network** design, which processes pairs of molecular inputs through two identical twin subnetworks that share weights:
 
 *   **Twin CNN Branches:** Two parallel convolutional networks process the 2D molecular structure images (generated via RDKit) to extract high-level spatial and topological features (such as ring systems, functional groups, and branch points).
-*   **Shared Embedding Space with L2 Normalisation (x):** Both branches project their respective input molecules into a normalised, low-dimensional continuous embedding vector space, preventing zero-vector collapse.
+*   **Shared Embedding Space with L2 Normalisation:** Both branches project their respective input molecules into a normalised, low-dimensional continuous embedding vector space, preventing zero-vector collapse.
 *   **Contrastive Loss Function:** Rather than traditional cross-entropy classification, the model optimises using Contrastive Loss. It explicitly pulls structurally or biologically similar molecules close together in the embedding space while pushing dissimilar compound classes apart based on a defined margin.
 
 ---
