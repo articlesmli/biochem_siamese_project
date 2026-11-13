@@ -1,0 +1,44 @@
+# ==========================================
+# Python & Virtual Environments
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# ==========================================
+# Trained Model Weights & Artifacts
+# ==========================================
+# Ignore local binary weights (trained model checkpoints)
+siamese_biochem_model.pth
+*.pth
+*.pt
+
+# ==========================================
+# Virtual Screening Reports & Outputs
+# ==========================================
+# Ignore dynamically generated timestamped CSV screening reports
+screening_report_*.csv
+
+# ==========================================
+# Raw Datasets (Optional: uncomment if you prefer not to commit data files)
+# ==========================================
+# data/*.csv
+
+# ==========================================
+# IDEs & Operating Systems
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
