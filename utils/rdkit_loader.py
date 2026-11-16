@@ -7,23 +7,21 @@ from torchvision import transforms
 
 
 def smiles_to_tensor(smiles_string, image_size=(128, 128)):
-  """Converts a SMILES string into a normalized 2D image tensor using RDKit."""
+  """Converts a SMILES string into a normalized 3-channel RGB image tensor using RDKit."""
   mol = Chem.MolFromSmiles(smiles_string)
   if mol is None:
-    # Fallback blank image if SMILES parsing fails
     img = Image.new("RGB", image_size, (255, 255, 255))
   else:
-    img = Draw.MolToImage(mol, size=image_size)
+    img = Draw.MolToImage(mol, size=image_size).convert("RGB")
 
   transform = transforms.Compose([
-      transforms.Grayscale(num_output_channels=1),
       transforms.ToTensor(),
-      transforms.Normalize(mean=[0.5], std=[0.5]),
+      transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
   ])
   return transform(img)
 
 
-def load_bbbp_dataset(csv_path):
+def load_bbbp_dataset(csv_path="data/molecules.csv"):
   """Loads the BBBP dataset CSV containing schema: num, name, p_np, smiles
 
   and generates RDKit structural image tensors for each molecule.
@@ -34,10 +32,13 @@ def load_bbbp_dataset(csv_path):
     for row in reader:
       num = row.get("num", "")
       name = row.get("name", "")
+      raw_label = row.get("p_np", "")
+      if raw_label in (None, ""):
+        continue
       try:
-        p_np = int(float(row.get("p_np", 0)))
+        p_np = int(float(raw_label))
       except ValueError:
-        p_np = 0
+        continue
       smiles = row.get("smiles", "")
 
       if smiles:
