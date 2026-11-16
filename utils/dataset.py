@@ -1,4 +1,5 @@
 import random
+
 import torch
 from torch.utils.data import Dataset
 
@@ -40,7 +41,7 @@ class SiameseBiochemDataset(Dataset):
       ]
       idx2 = random.choice(candidates)
     else:
-      diff_labels = [l for l in self.unique_labels if l != label1]
+      diff_labels = [lbl for lbl in self.unique_labels if lbl != label1]
       if not diff_labels:
         idx2 = index
       else:
