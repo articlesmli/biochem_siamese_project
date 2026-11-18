@@ -50,9 +50,9 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          # Runs pytest if a tests/ directory is present, otherwise verifies core modules
+          # Runs pytest if a tests/ directory is present, with PYTHONPATH configured for package resolution
           if [ -d "tests" ]; then
-            pytest --cov=models --cov=utils -v
+            PYTHONPATH=. pytest --cov=models --cov=utils -v
           else
             python -c "import torch; import rdkit; print('Environment & dependency check passed!')"
           fi
@@ -77,3 +77,4 @@ jobs:
           tags: biochem-siamese:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+```[cite: 1, 12]
