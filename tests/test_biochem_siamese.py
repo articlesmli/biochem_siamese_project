@@ -1,8 +1,8 @@
 import torch
-import pytest
+
 from models.siamese_net import SiameseNetwork
-from utils.metrics import ContrastiveLoss
 from utils.dataset import SiameseBiochemDataset
+from utils.metrics import ContrastiveLoss
 from utils.rdkit_loader import smiles_to_tensor
 
 
