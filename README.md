@@ -50,6 +50,8 @@ biochem_siamese_project/
 │   ├── dataset.py              # Siamese paired dataset builder
 │   ├── metrics.py              # Contrastive loss implementation
 │   └── rdkit_loader.py         # RDKit SMILES-to-tensor processor & synchronised CSV loader
+├── tests/
+│   └── test_biochem_siamese.py # Unit tests for models, metrics, dataset, and RDKit loader
 │
 ├── Dockerfile                  # Containerisation setup with RDKit dependencies & model weights
 ├── train.py                    # Model training script
@@ -112,9 +114,18 @@ curl -o data/molecules.csv https://deepchemdata.s3-us-west-1.amazonaws.com/datas
 
 ---
 
-## Usage
+## Usage & Testing
 
-### 1. Train the Siamese Network
+### 1. Run Unit Tests & Code Coverage (pytest)
+
+Verify core modules, shape consistency, loss calculations, and RDKit parsing using pytest with code coverage reporting:
+
+```bash
+python -m pytest --cov=models --cov=utils -v
+
+```
+
+### 2. Train the Siamese Network
 
 Train the Siamese twin network on the molecular dataset using Contrastive Loss. The script automatically loads SMILES strings via RDKit, generates structured image tensors, forms similarity/dissimilarity pairs, and saves the trained weights to `siamese_biochem_model.pth`.
 
@@ -153,3 +164,28 @@ docker run --rm biochem-siamese python evaluate.py --name "Ibuprofen" --smiles "
 ## License
 
 This project is open-source and available under the terms of the MIT License.
+
+
+
+---
+
+## Future Roadmap
+
+### Phase 1: Model Architecture & Representation Enhancements
+
+* **Multimodal Feature Fusion:** Move beyond static 2D molecular images by fusing visual structure features with molecular property descriptors (e.g., Extended-Connectivity Fingerprints or graph neural network representations) to capture more nuanced electrostatic and non-covalent interactions.
+* **Hard Negative Mining:** Implement active triplet loss or semi-hard negative mining strategies during training to explicitly force the model to separate challenging, structurally similar compounds that have opposing biological activities.
+* **Attention Mechanisms:** Integrate spatial attention or self-attention modules within the twin CNN layers to allow the network to dynamically focus on active pharmacophores and bioisosteric centers rather than background scaffolding.
+
+### Phase 2: Scale, Validation, & Generalization
+
+* **Cross-Dataset Validation:** Expand beyond the BBBP (Blood-Brain Barrier Penetration) benchmark by integrating additional MoleculeNet datasets (e.g., Tox21 for toxicity, ClinTox for clinical toxicity, or HIV inhibition datasets).
+* **Robust Metrics & Explainability:** Implement true ranking performance metrics like Mean Average Precision (MAP), ROC-AUC, and t-SNE / UMAP latent space cluster visualisers to intuitively evaluate how well your 128-dimensional embedding space separates active and inactive compounds.
+* **Hyperparameter Optimisation:** Integrate tools like Optuna or Weights & Biases (W&B) into your training script to systematically optimise learning rates, margins, and CNN filter sizes.
+
+### Phase 3: Production, API, & Scalability
+
+* **FastAPI Inference Microservice:** Wrap your `evaluate.py` script into a high-performance asynchronous REST API (`/predict`, `/screen`) using FastAPI, allowing users to submit custom SMILES strings and receive instantaneous similarity rankings.
+* **Vector Database Integration:** For ultra-fast querying against million-scale chemical compound libraries (like ZINC or ChEMBL), offload the pre-computed candidate embeddings into a vector search engine like FAISS, Pinecone, or Milvus instead of computing linear Euclidean distances.
+
+
